@@ -1293,3 +1293,79 @@ main.wrap{
 .longitudinalFocusPage .templateExportCard .panelSubtext{max-width:100%}
 .longitudinalFocusPage .longitudinalControlViz .panelTitleRow,
 .longitudinalFocusPage .templateExportCard .panelTitleRow{display:none !important}
+
+
+/* v5.33 visualizer menu balanced */
+.visualizerMenuPage .visualizerMenuHead{margin-bottom:12px}
+.visualizerMenuPage .visualizerMenuHead h2{margin-bottom:0}
+.visualizerMenuPage .visualizerSubGrid{
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+}
+.visualizerMenuPage .vizSubItem{
+  display:grid !important;
+  grid-template-columns:56px minmax(0,1fr) 18px;
+  align-items:center;
+  gap:14px;
+  min-height:96px !important;
+  padding:16px 18px !important;
+  border-radius:22px;
+}
+.visualizerMenuPage .vizSubIconWrap{
+  width:50px;
+  height:50px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(99,102,241,.24), rgba(34,211,238,.10));
+  border:1px solid rgba(129,140,248,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.visualizerMenuPage .vizSubItem .icon{
+  font-size:1.55rem !important;
+  display:block;
+  margin:0 !important;
+  line-height:1;
+}
+.visualizerMenuPage .vizSubText{
+  min-width:0;
+}
+.visualizerMenuPage .vizSubItem h3{
+  font-size:1.02rem !important;
+  line-height:1.32 !important;
+  margin:0 0 6px !important;
+  color:#eef6ff;
+}
+.visualizerMenuPage .vizSubItem p{
+  margin:0 !important;
+  font-size:.86rem !important;
+  line-height:1.45 !important;
+  color:#bed0e7;
+  max-width:none !important;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.visualizerMenuPage .vizSubArrow{
+  font-size:1.4rem;
+  line-height:1;
+  color:#93a4bf;
+  opacity:.9;
+}
+.visualizerMenuPage .vizSubItem:hover .vizSubArrow{
+  color:#dbeafe;
+}
+@media (max-width: 640px){
+  .visualizerMenuPage .vizSubItem{
+    grid-template-columns:50px minmax(0,1fr) 16px;
+    gap:12px;
+    padding:14px 14px !important;
+    min-height:90px !important;
+  }
+  .visualizerMenuPage .vizSubIconWrap{width:44px;height:44px;border-radius:14px}
+  .visualizerMenuPage .vizSubItem .icon{font-size:1.3rem !important}
+  .visualizerMenuPage .vizSubItem h3{font-size:.96rem !important;line-height:1.28 !important}
+  .visualizerMenuPage .vizSubItem p{font-size:.82rem !important;line-height:1.4 !important}
+}
