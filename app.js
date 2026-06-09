@@ -515,25 +515,26 @@ function drawLongitudinalFinal(ctx, c, p, w, h){
   }
 
   const eqX = w * 0.555;
-  const xMin = Math.max(160, w * 0.16);
-  const xMax = w - 76;
+  const xMin = Math.max(158, w * 0.155);
+  const xMax = w - 72;
 
-  // v5.65: large particles + many rows, using most of the graph height.
-  const rows = 18;
-  const rowGap = Math.max(17, Math.min(22, h * 0.034));
-  const particleRadius = Math.max(8.6, Math.min(10.8, h * 0.017));
+  // v5.66: vertical-fill layout.
+  // top of particles stays just below direction/equilibrium labels;
+  // bottom stays close to x-axis and player bar.
+  const rows = 21;
+  const graphTop = 58;                  // close to graph title area
+  const axisY = h - 44;                 // close to bottom/player bar
+  const y0 = Math.max(104, graphTop + 72);
+  const availableHeight = Math.max(220, axisY - y0 - 12);
+  const rowGap = availableHeight / (rows - 1);
+  const particleRadius = Math.max(7.8, Math.min(10.2, rowGap * 0.44));
   const bandHeight = (rows - 1) * rowGap;
-
-  // Move wave labels near the particle field and use the vertical space better.
-  const topFree = Math.max(74, h * 0.16);
-  const y0 = Math.max(topFree + 54, Math.min(h - bandHeight - 58, h * 0.265));
   const yCenter = y0 + bandHeight * 0.5;
-  const axisY = y0 + bandHeight + 20;
 
-  const speakerX = Math.max(70, xMin - 88);
+  const speakerX = Math.max(66, xMin - 94);
   const speakerY = yCenter;
-  const currentAmpPx = 17.5 * p.A;
-  const baseGap = Math.max(32, Math.min(40, w * 0.032));
+  const currentAmpPx = 17.0 * p.A;
+  const baseGap = Math.max(34, Math.min(42, w * 0.034));
   const k = 2 * Math.PI / 270;
   const phase = vizState.t * 0.105 * p.speed;
   const obsRow = Math.floor(rows/2);
@@ -542,15 +543,15 @@ function drawLongitudinalFinal(ctx, c, p, w, h){
   let obsY = y0 + obsRow * rowGap;
 
   // Speaker source on the left
-  drawSpeaker(ctx, speakerX, speakerY, 1.22);
+  drawSpeaker(ctx, speakerX, speakerY, 1.18);
 
-  // Compression/rarefaction glow bands
+  // Compression/rarefaction glow bands fill the particle column height.
   const bandCenters=[
-    xMin+50,
-    xMin+220,
+    xMin+48,
+    xMin+218,
     xMin+410,
     xMin+600,
-    xMin+785
+    xMin+790
   ];
   bandCenters.forEach((bx,i)=>{
     const g=ctx.createLinearGradient(bx-62,0,bx+62,0);
@@ -559,17 +560,17 @@ function drawLongitudinalFinal(ctx, c, p, w, h){
     g.addColorStop(.5,col);
     g.addColorStop(1,"rgba(0,0,0,0)");
     ctx.fillStyle=g;
-    ctx.fillRect(bx-68,Math.max(48,y0-30),136,bandHeight+62);
+    ctx.fillRect(bx-68,Math.max(44,y0-24),136,bandHeight+52);
   });
 
-  // Canvas title
+  // Small canvas title
   ctx.fillStyle="#cfe9ff";
   ctx.font="20px Sarabun, system-ui, sans-serif";
   ctx.textAlign="left";
   ctx.fillText("Longitudinal Wave (คลื่นตามยาว)", 24, 34);
 
-  // Wave direction arrow: close to particles to reduce upper empty space.
-  const arrowY = Math.max(68, y0 - 42);
+  // Direction arrow: immediately above equilibrium label and particle field.
+  const arrowY = y0 - 56;
   ctx.save();
   ctx.strokeStyle="rgba(34,211,238,.96)";
   ctx.fillStyle="rgba(34,211,238,.96)";
@@ -589,14 +590,14 @@ function drawLongitudinalFinal(ctx, c, p, w, h){
   ctx.fillText("ทิศทางการเคลื่อนที่ของคลื่น", w*0.57, arrowY-16);
   ctx.restore();
 
-  // Equilibrium marker
-  const eqLabelY = y0 - 12;
+  // Equilibrium marker, placed close to particle top.
+  const eqLabelY = y0 - 22;
   ctx.save();
   ctx.strokeStyle="rgba(255,255,255,.80)";
   ctx.setLineDash([8,8]);
   ctx.lineWidth=2;
   ctx.beginPath();
-  ctx.moveTo(eqX, eqLabelY + 8);
+  ctx.moveTo(eqX, eqLabelY + 9);
   ctx.lineTo(eqX, axisY + 2);
   ctx.stroke();
   ctx.setLineDash([]);
@@ -606,7 +607,7 @@ function drawLongitudinalFinal(ctx, c, p, w, h){
   ctx.fillText("ตำแหน่งสมดุล", eqX, eqLabelY);
   ctx.restore();
 
-  // x-axis
+  // x-axis directly under particle field.
   ctx.save();
   ctx.strokeStyle="rgba(255,245,220,.94)";
   ctx.fillStyle="rgba(255,255,255,.94)";
@@ -1086,15 +1087,16 @@ function resizeVisualizerCanvas(){
   const rect = container.getBoundingClientRect();
   const cssW = Math.max(280, Math.floor(rect.width - 4));
   const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-  const isLongitudinal = document.body?.classList?.contains("longitudinalFocusPage") ||
-    document.querySelector(".visualizerSinglePage[data-viz-mode='longitudinal']");
+  const isLongitudinal = !!document.querySelector(".visualizerSinglePage[data-viz-mode='longitudinal']");
 
   let cssH;
   if(isLongitudinal){
-    // v5.65: graph must dominate the mobile screen.
-    // Portrait uses a much taller canvas; landscape still keeps enough graph height.
-    cssH = isLandscape ? Math.round(cssW * 0.52) : Math.round(cssW * 0.78);
-    cssH = Math.max(isLandscape ? 260 : 460, Math.min(cssH, isLandscape ? 360 : 620));
+    // v5.66: force graph to fill the graph slot vertically on real phones.
+    // Portrait: graph height is based on viewport height, not just width.
+    // This makes the particle region extend from near the title to near the player bar.
+    const vh = Math.max(640, window.innerHeight || 800);
+    cssH = isLandscape ? Math.round(Math.min(vh * 0.62, cssW * 0.54)) : Math.round(vh * 0.46);
+    cssH = Math.max(isLandscape ? 250 : 390, Math.min(cssH, isLandscape ? 360 : 520));
   }else{
     cssH = isLandscape ? Math.round(cssW * 0.42) : Math.round(cssW * 0.54);
     cssH = Math.max(isLandscape ? 180 : 220, Math.min(cssH, isLandscape ? 235 : 320));

@@ -2325,3 +2325,47 @@ main.wrap{
     height:40px !important;
   }
 }
+
+
+/* v5.66: force the graph itself to fill the slot vertically */
+.longitudinalFocusPage .vizMediaFrame canvas{
+  aspect-ratio:auto !important;
+  height:46vh !important;
+  min-height:390px !important;
+  max-height:520px !important;
+}
+.longitudinalFocusPage .embeddedPlayerBar{
+  margin-top:2px !important;
+  min-height:50px !important;
+  padding:4px 10px 6px !important;
+}
+.longitudinalFocusPage .embeddedPlayerBar .playerBtn,
+.longitudinalFocusPage .embeddedPlayerBar .playerPrimary{
+  width:46px !important;
+  height:46px !important;
+  transform:none !important;
+}
+
+@media(max-width:760px){
+  .longitudinalFocusPage .vizMediaFrame canvas{
+    height:46vh !important;
+    min-height:390px !important;
+    max-height:510px !important;
+  }
+  .longitudinalFocusPage .embeddedPlayerBar{
+    min-height:48px !important;
+  }
+}
+
+@media(max-width:950px) and (orientation:landscape){
+  .longitudinalFocusPage .vizMediaFrame canvas{
+    height:62vh !important;
+    min-height:250px !important;
+    max-height:350px !important;
+  }
+  .longitudinalFocusPage .embeddedPlayerBar .playerBtn,
+  .longitudinalFocusPage .embeddedPlayerBar .playerPrimary{
+    width:38px !important;
+    height:38px !important;
+  }
+}
