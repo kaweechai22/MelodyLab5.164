@@ -1,0 +1,10 @@
+{
+  "version": "v5.195",
+  "base": "v5.194",
+  "changes": [
+    "Shortened explanation under topic heading",
+    "Reduced default animation speed from 1.0x to 0.5x",
+    "Reduced actual playback rate multiplier for easier viewing",
+    "Updated service worker cache name"
+  ]
+}
