@@ -1,0 +1,22 @@
+{
+  "version": "v5.201",
+  "base": "v5.200",
+  "changes": [
+    "Moved vertical dashed probe line to center of animation",
+    "Added probe label at center",
+    "Changed animation speed range to 0.1x-1.0x",
+    "Default animation speed set to 0.3x",
+    "Actual visual cycles per second = timeSpeed × 0.20",
+    "Kept animation speed decoupled from sound frequency f",
+    "Mobile slower/faster buttons now step by 0.1"
+  ],
+  "speed_model": {
+    "slider_min": 0.1,
+    "slider_max": 1.0,
+    "slider_default": 0.3,
+    "actual_cycles_per_second": "timeSpeed × 0.20",
+    "min_seconds_per_cycle": 50,
+    "default_seconds_per_cycle": 16.67,
+    "max_seconds_per_cycle": 5
+  }
+}
