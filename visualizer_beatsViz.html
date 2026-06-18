@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MelodyLab v5.210 - Beats (บีตส์)</title>
+  <title>MelodyLab v5.212 - Beats (บีตส์)</title>
   <meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ">
   <meta name="theme-color" content="#0f172a">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="style.css">
-  <meta name="melodylab-build-version" content="v5.210-beats-layout-audio-gap-limit">
+  <meta name="melodylab-build-version" content="v5.212-safe-cleanup-verified">
   <style>
     .beatReadoutBar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
     .beatReadoutBar>div{border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.48);border-radius:14px;padding:9px 11px;min-height:56px}
@@ -63,7 +63,7 @@
     <div>
       <h2>Beats (บีตส์)</h2>
       <p class="sectionLead">บีตส์คือเสียงดัง–ค่อยสลับกันเป็นจังหวะ เมื่อคลื่นเสียงสองขบวนที่มีความถี่ใกล้กันซ้อนทับกัน</p>
-      <span class="versionBadge">v5.210 • layout + audio moved + Δf≤10 Hz</span>
+      <span class="versionBadge">v5.212 • verified + Δf≤10 Hz</span>
     </div>
   </div>
   <div class="visualizerTemplateGrid longitudinalFocusGrid">
@@ -132,27 +132,23 @@ function fmt(v,n=2){return Number(v).toFixed(n);}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function enforceFreqGap(changedId='vizFreq2'){
   const f1El=$('vizFreq1'), f2El=$('vizFreq2'); if(!f1El||!f2El)return;
-  let f1=Number(f1El.value), f2=Number(f2El.value);
   const limit=10;
-  if(Math.abs(f2-f1)>limit){
-    if(changedId==='vizFreq1'){
-      const sign=(f2>=f1)?1:-1;
-      f2=clamp(f1+sign*limit,Number(f2El.min),Number(f2El.max));
-      f2El.value=String(Math.round(f2));
-    }else{
-      const sign=(f2>=f1)?1:-1;
-      f2=clamp(f1+sign*limit,Number(f2El.min),Number(f2El.max));
-      f2El.value=String(Math.round(f2));
-    }
+  let f1=Number(f1El.value), f2=Number(f2El.value);
+  const minF2=Math.max(200,Math.round(f1-limit));
+  const maxF2=Math.min(1000,Math.round(f1+limit));
+  // Update the f2 slider range first, then clamp into the new safe range.
+  f2El.min=String(minF2);
+  f2El.max=String(maxF2);
+  if(Math.abs(f2-f1)>limit || f2<minF2 || f2>maxF2){
+    const sign=(f2>=f1)?1:-1;
+    f2=clamp(f1+sign*limit,minF2,maxF2);
+    f2El.value=String(Math.round(f2));
   }
-  // Keep f2 slider focus around f1 ± 10 Hz after current value is corrected.
-  f2El.min=String(Math.max(200,Math.round(f1-limit)));
-  f2El.max=String(Math.min(1000,Math.round(f1+limit)));
 }
 function params(){
   enforceFreqGap();
   const f1=Number($('vizFreq1')?.value||440);
-  const f2=Number($('vizFreq2')?.value||444);
+  const f2=Number($('vizFreq2')?.value||447);
   const A=Number($('vizAmp')?.value||0.90);
   const timeSpeed=Number($('vizTimeSpeed')?.value||0.3);
   const volume=Number($('vizVolume')?.value||0.06);
